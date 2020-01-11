@@ -804,18 +804,18 @@ namespace Assistant
         {
             if (circle <= 8) // Mage
                 return 3002011 + ((circle - 1) * 8) + (num - 1);
-            else if (circle == 10) // Necr
+            if (circle == 10) // Necr
                 return 1060509 + num - 1;
-            else if (circle == 20) // Chiv
+            if (circle == 20) // Chiv
                 return 1060585 + num - 1;
-            else if (circle == 40) // Bush
+            if (circle == 40) // Bush
                 return 1060595 + num - 1;
-            else if (circle == 50) // Ninj
+            if (circle == 50) // Ninj
                 return 1060610 + num - 1;
-            else if (circle == 60) // Elfs
+            if (circle == 60) // Elfs
                 return 1071026 + num - 1;
-            else
-                return -1;
+            
+            return -1;
         }
 
         private static Dictionary<string, LocString> SteamActionMappings = new Dictionary<string, LocString>()

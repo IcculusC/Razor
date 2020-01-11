@@ -385,7 +385,7 @@ namespace Assistant
         public bool ImportSteam(string path)
         {
             if (!File.Exists(path))
-            return false;
+                return false;
 
             XmlDocument doc = new XmlDocument();
           
@@ -413,10 +413,9 @@ namespace Assistant
                 try
                 {
                     string steamName = el.GetAttribute("name");
-                    // string typeStr = el.GetAttribute("type");
                     string[] razorMapping = null;
 
-                    if (SteamDataMappings.ContainsKey(steamName))
+                    if (!SteamDataMappings.TryGetValue(steamName, out razorMapping) || razorMapping == null)
                         razorMapping = SteamDataMappings[steamName];
 
                     if (razorMapping == null)
@@ -428,7 +427,6 @@ namespace Assistant
 
                     if (typeStr == "-null-")
                     {
-                        //m_Props[name] = null;
                         if (m_Props.ContainsKey(razorMapping[0]))
                             m_Props.Remove(razorMapping[0]);
                     }
