@@ -10366,14 +10366,12 @@ namespace Assistant
             OpenFileDialog fileDialog = new OpenFileDialog();
             if (fileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                MessageBox.Show(this, Path.GetFileNameWithoutExtension(fileDialog.FileName), "File Selected", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-
                 if (fileDialog.FileName == null)
                     return;
 
                 string profileFilename = Path.GetFileNameWithoutExtension(fileDialog.FileName);
 
+                m_ProfileConfirmLoad = false;
                 Config.NewProfile($"{profileFilename}_SteamImport");
                 Config.CurrentProfile.ImportSteam(fileDialog.FileName);
                 profiles.Items.Add($"{profileFilename}_SteamImport");
@@ -10382,6 +10380,7 @@ namespace Assistant
                 if (World.Player != null)
                     Config.SetProfileFor(World.Player);
 
+                m_ProfileConfirmLoad = true;
                 Config.Save();
             }
         }

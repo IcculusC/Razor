@@ -331,7 +331,7 @@ namespace Assistant
             { "GameWindowHeight", new string[2]{ "ForceSizeY", "System.Int32" } },
             { "HandsBeforePotions", new string[2]{ "PotionEquip", "System.Boolean" } },
             { "HandsBeforeCasting", new string[2]{ "SpellUnequip", "System.Boolean" } },
-            // { "SmartTarget", new string[2]{ "SmartLastTarget", "System.Boolean" } },
+            { "SmartTarget", new string[2]{ "SmartLastTarget", "Variant" } },
             { "SmartTargetRange", new string[2]{ "RangeCheckLT", "System.Boolean" } },
             { "SmartTargetRangeValue", new string[2]{ "LTRange", "System.Int32" } },
             { "HighlightCurrentTarget", null }, // ??
@@ -366,15 +366,15 @@ namespace Assistant
             { "FriendsListOnly", null }, // ??
             { "FriendsParty", null }, // ??
             { "MoveConflictingItems", null }, // ??
-            { "CustomCaption", null }, // TitleBarDisplay ??
-            { "CustomCaptionMode", null }, // TitlebarImages ??
-            { "CustomCaptionText", null }, // RazorTitleBarText
+            { "CustomCaption", null }, // TitleBarDisplay ?? think this is a Boolean
+            { "CustomCaptionMode", null }, // TitlebarImages ?? forgot what this does
+            { "CustomCaptionText", null }, // RazorTitleBarText ?? this is in a different format and I'm lazy
             { "WarnCounters", new string[2]{ "CounterWarn", "System.Boolean" } },
             { "WarnCountersValue", new string[2]{ "CounterWarnAmount", "System.Int32" } },
             { "HighlightReagents", new string[2]{ "HighlightReagents", "System.Boolean" } },
-            { "DisplayCountersName", null }, // ??
+            { "DisplayCountersName", null }, // ?? Razor seems to store this per counter
             { "CaptionUseNotoHue", null }, // ??
-            { "DisplayCountersImage", null }, // ??
+            { "DisplayCountersImage", null }, // ?? Razor seems to store this per counter
             { "PreventDismount", new string[2]{ "BlockDismount", "System.Boolean" } },
             { "PreventAttackFriends", null }, // ??
             { "AutoSearchContainers", new string[2]{ "AutoSearch", "System.Boolean" } },
@@ -413,22 +413,17 @@ namespace Assistant
                 try
                 {
                     string steamName = el.GetAttribute("name");
-                    string[] razorMapping = null;
 
-                    if (!SteamDataMappings.TryGetValue(steamName, out razorMapping) || razorMapping == null)
-                        razorMapping = SteamDataMappings[steamName];
-
-                    if (razorMapping == null)
+                    if (!SteamDataMappings.TryGetValue(steamName, out string[] razorMapping) || razorMapping == null)
                         continue;
 
                     string typeStr = razorMapping[1];
-
                     string val = el.InnerText;
 
-                    if (typeStr == "-null-")
+                    if (typeStr == "Variant")
                     {
-                        if (m_Props.ContainsKey(razorMapping[0]))
-                            m_Props.Remove(razorMapping[0]);
+                        int value = Convert.ToInt32(val, 16);
+                        m_Props[razorMapping[0]] = Convert.ToBoolean(value);
                     }
                     else
                     {
@@ -440,27 +435,10 @@ namespace Assistant
                         {
                             if (type == null)
                                 m_Props.Remove(razorMapping[0]);
+                            else if (type.Name == "Int32")
+                                m_Props[razorMapping[0]] = Convert.ToInt32(val, 16);
                             else
-                            {
-                                switch (type.Name)
-                                {
-                                    case "Int32":
-                                        {
-                                            m_Props[razorMapping[0]] = Convert.ToInt32(val, 16);
-                                            break;
-                                        }
-                                    case "Variant":
-                                        {
-                                            m_Props[razorMapping[0]] = GetObjectFromString(Convert.ToInt32(val, 16).ToString(), type);
-                                            break;
-                                        }
-                                    default:
-                                        {
-                                            m_Props[razorMapping[0]] = GetObjectFromString(val, type);
-                                            break;
-                                        }
-                                }
-                            }
+                                m_Props[razorMapping[0]] = GetObjectFromString(val, type);
                         }
                     }
                 }

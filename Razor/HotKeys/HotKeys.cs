@@ -995,7 +995,7 @@ namespace Assistant
                 {
                     string action = el.GetAttribute("action");
 
-                    if (!SteamActionMappings.ContainsKey(action))
+                    if (!SteamActionMappings.TryGetValue(action, out LocString razorAction))
                         continue;
 
                     int keyMask = Convert.ToInt32(el.GetAttribute("key"), 16);
@@ -1016,7 +1016,7 @@ namespace Assistant
 
                     string pass = el.GetAttribute("pass");
 
-                    KeyData k = Get((int)SteamActionMappings[action]);
+                    KeyData k = Get((int)razorAction);
 
                     if (k != null)
                     {
