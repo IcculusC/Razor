@@ -10364,12 +10364,11 @@ namespace Assistant
         {
             Config.Save();
             OpenFileDialog fileDialog = new OpenFileDialog();
-            if (fileDialog.ShowDialog(this) == DialogResult.OK)
+            if (fileDialog.ShowDialog(this) == DialogResult.OK && fileDialog.FileName != null)
             {
-                if (fileDialog.FileName == null)
-                    return;
-
                 string profileFilename = Path.GetFileNameWithoutExtension(fileDialog.FileName);
+                if (MessageBox.Show($"Are you sure you want to import the profile \"{profileFilename}\" from steam?", "Import Profile", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                    return;
 
                 m_ProfileConfirmLoad = false;
                 Config.NewProfile($"{profileFilename}_SteamImport");
